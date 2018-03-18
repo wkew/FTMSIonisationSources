@@ -2,7 +2,8 @@
 """
 Created on Tue Jan 16 16:16:10 2018
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -28,7 +29,7 @@ def hetclasser(C,H,O):
     return hetclass
 
 # Aromaticity Index calculation. Unlike DBE, this factors in O and S. Taken from DOI: 10.1002/rcm.2386
-# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound. 
+# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound.
 def AIcalc(C,H,N,O,S,P,mod=True):
     if C == 0:
         return None
@@ -58,7 +59,7 @@ def dividor(X,Y):
     else:
         return (X/Y)
 
-#counts number of 0s within a row (of 4)    
+#counts number of 0s within a row (of 4)
 def countnonzeros(data):
     if 0 in data.value_counts():
         return 4 - data.value_counts()[0]
@@ -77,19 +78,19 @@ ionisationsources = ["APCI","APPI","LDI","ESI"]
 df = pd.read_csv(inputdata+file,index_col=0)
 
 
-nsamples = len(df.T)-15 # how many samples are in this dataframe? 
+nsamples = len(df.T)-15 # how many samples are in this dataframe?
 samplenames = df.columns[15:].values.tolist() # Get the file names from the headers of the dataframe
 
-# This section computes statistics for assignments for each sample. 
+# This section computes statistics for assignments for each sample.
 for source in ionisationsources:
     samplestopdrop = [x for x in samplenames if not source in x]
     samplename = [x for x in samplenames if source in x]
     df_new = df.copy() #create a new dataframe copy of our data to modify
     df_new.drop(samplestopdrop,axis=1,inplace=True) # remove other samples from this dataframe
-    
+
     #this sums the intensities of our ionisation sources - i.e. making one column to check if peaks found in these samples
     df_new.loc[:,"SumInt"] = df_new.apply(lambda row: (row[-4:].sum()),axis=1)
-    df_new = df_new[df_new["SumInt"]!=0] #remove rows where peaks werent found in given samples. 
+    df_new = df_new[df_new["SumInt"]!=0] #remove rows where peaks werent found in given samples.
     df_new.loc[:,"TimesFound"] = df_new.apply(lambda row: countnonzeros(row[-4:]),axis=1)
 
     #add formula and heteroatomic classes
@@ -99,7 +100,7 @@ for source in ionisationsources:
     df_new.loc[:,"HC"] = df_new.apply(lambda row: dividor(row['H'],row['C']),axis=1)
     df_new.loc[:,"AImod"] = df_new.apply(lambda row: AIcalc(row['C'],row['H'],0,row['O'],0,0),axis=1) #CHNOSP and optional bool 'mod' switch
     df_new.loc[:,"DBE"] = df_new.apply(lambda row: DBEcalc(row['C'],row['H'],0),axis=1) #CHN and optional int X switch.
-    
+
     writer = pd.ExcelWriter(outputdata+source+"-"+polarity+'.xlsx')
     df_new.to_excel(writer,'All Peaks')
     df_new_nohits = df_new[df_new['C']==0].copy() # This filters to leave only isotopic hits
@@ -109,7 +110,7 @@ for source in ionisationsources:
     df_new_iso.to_excel(writer,'Isotopic Hits')
     df_new_nohits.to_excel(writer,'Unassigned')
     writer.save()
-    
+
 """
 #Generate a new dataframe for our statistics output
 statscols = ["Polarity","Ionisation Source", "Sample","Total Peaks","Monoisotopic Hits","Isotopic Hits",
@@ -139,9 +140,9 @@ for sample in samplenames:
     df_statistics.loc[samplename,"Radicals"] = len(df_new[(df_new['State']==".-")])
     df_statistics.loc[samplename,"Monoisotopic Deprotonated"] = len(df_new[(df_new['State']=="H-") & (df_new['C13']==0)])
     df_statistics.loc[samplename,"Monoisotopic Radicals"] = len(df_new[(df_new['State']==".-") & (df_new['C13']==0)])
-    
-    
-writer = pd.ExcelWriter(path+"Hit Statistics/"+"HitStatistics.xlsx") 
+
+
+writer = pd.ExcelWriter(path+"Hit Statistics/"+"HitStatistics.xlsx")
 df_statistics.to_excel(writer,"Statistics")
 # Get access to the workbook and sheet
 workbook = writer.book

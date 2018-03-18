@@ -2,7 +2,8 @@
 """
 Created on Wed Jan 17 22:38:19 2018
 
-@author: Will
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -16,7 +17,7 @@ chemdict = {'H':(1.007825, 0.99984),
             'S':(31.972071, 0.95041)}
 
 # Aromaticity Index calculation. Unlike DBE, this factors in O and S. Taken from DOI: 10.1002/rcm.2386
-# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound. 
+# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound.
 def AIcalc(C,H,O,S,N=0,P=0,mod=True):
     if mod == True:
         O = O/2
@@ -37,7 +38,7 @@ def DBEcalc(C,H,N,X=0):
     DBE = (C+1-(H/2)-(X/2)+(N/2))
     return DBE
 
-def formulaproperties(df):     
+def formulaproperties(df):
     df1 = pd.DataFrame(columns=df.columns[3:],index=['C','H','O','Hetero','OC','HC','DBE','AImod','Mass'])
     bar = progressbar.ProgressBar()
     for y in bar(df1.columns.values):
@@ -75,7 +76,7 @@ bar = progressbar.ProgressBar()
 for x in bar(files):
     sample = x[:-5]
     df1 = pd.read_excel(inputdata+x,sheet_name="Hits")
-    df1=df1.groupby('Formula',as_index=False).mean() #This clever line averages the values for duplicated formula, i.e. radicals found. 
+    df1=df1.groupby('Formula',as_index=False).mean() #This clever line averages the values for duplicated formula, i.e. radicals found.
     #df1.rename(columns={sample:'Abundance'},inplace=True)
     df.loc[x,'Mode'] = x.split('-')[0]
     df.loc[x,'Polarity'] = x.split('-')[1]
@@ -84,7 +85,7 @@ for x in bar(files):
         df.loc[x,data['Formula']] = data['Error_ppm']
 
 filename = outputdata+"AllHits-Errors-Matrix.xlsx"
-    
+
 df.to_excel(filename)
 
 
@@ -108,7 +109,7 @@ for index,data in bar(dflong.iterrows()):
     dflong.loc[index,'DBE'] = df1.loc['DBE',data['Formula']]
     dflong.loc[index,'AImod'] = df1.loc['AImod',data['Formula']]
     dflong.loc[index,'Mass'] = df1.loc['Mass',data['Formula']]
- 
+
 dflong = dflong.drop('index',axis=1)
 
 filename = outputdata+"AllHits-Errors-Longform.xlsx"

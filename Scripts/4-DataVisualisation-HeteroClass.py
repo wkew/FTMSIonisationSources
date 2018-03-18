@@ -2,7 +2,8 @@
 """
 Created on Tue Oct 24 15:04:37 2017
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -35,7 +36,7 @@ df1 = df1[df1['Mass']<800]
 df1 = df1[df1['O']<20]
 """
 sns.set_style("white")
-sns.set_context("paper",font_scale=2)  
+sns.set_context("paper",font_scale=2)
 glocmap = cm.viridis_r
 """
 
@@ -55,8 +56,8 @@ plt.show()
 
 plt.rcdefaults()
 
-order= list(set(df1['HeteroClass']))                
-order.sort(key=natural_sort_key) # this natural sort function ensures a logical order to your barplot. 
+order= list(set(df1['HeteroClass']))
+order.sort(key=natural_sort_key) # this natural sort function ensures a logical order to your barplot.
 CHOorder = [x for x in order if 'CH' not in x]
 
 
@@ -78,7 +79,7 @@ def HeteroClassplot(df):
     plt.subplots_adjust(hspace=0.4)
     fig = g.fig
     fig.savefig(outputdata+"HeteroClassPlot.png",dpi=300)
-    
+
     #### THIS PRODUCES THE Plot with Mode Hue #####
     g = sns.factorplot(x='HeteroClass',data=df,
            hue='Mode',#row = 'Polarity',
@@ -93,7 +94,7 @@ def HeteroClassplot(df):
                    #palette=sns.cubehelix_palette(int(len(CHOorder)),dark=0,light=0.6,rot=0,reverse=True))
     (g.set_axis_labels("Heteroatomic Class", "Count")
     .set_titles(""))
-    #.despine(left=True))  
+    #.despine(left=True))
     plt.xticks(rotation=90)
     plt.legend(loc=1)
     [plt.setp(ax.get_xticklabels(), rotation=90) for ax in g.axes.flat]
@@ -102,9 +103,9 @@ def HeteroClassplot(df):
     plt.tight_layout()
     fig.savefig(outputdata+"HeteroClassPlot-byMode.png",dpi=300)
     plt.show()
-    
-    
-def HeteroClassplot2(df): 
+
+
+def HeteroClassplot2(df):
     #### THIS PRODUCES THE Plot with Mode Hue #####
     a_val=1
     colors = sns.color_palette("Paired", 4)
@@ -121,7 +122,7 @@ def HeteroClassplot2(df):
                    #palette=sns.cubehelix_palette(int(len(CHOorder)),dark=0,light=0.6,rot=0,reverse=True))
     (g.set_axis_labels("Heteroatomic Class", "Count")
     .set_titles(""))
-    #.despine(left=True))  
+    #.despine(left=True))
     """
     num_locations = len(df['HeteroClass'].unique())
     hatches = itertools.cycle(['////', '\\\\\\', '----', 'xxx',  '*', 'o', 'O', '.'])
@@ -129,7 +130,7 @@ def HeteroClassplot2(df):
         if i % num_locations == 0:
             hatch = next(hatches)
         bar.set_hatch(hatch)
-    
+
     #hatches = ['////']*19+['\\\\\\']*18+['----']*18+['xxx']*19
     hatches = {colors[0]:'////',
                colors[1]:'\\\\\\',
@@ -139,7 +140,7 @@ def HeteroClassplot2(df):
         # Set a different hatch for each bar
         #thisbar.properties()['facecolor']
         thisbar.set_hatch(hatches[thisbar.properties()['facecolor']])
-    """   
+    """
     hatches = ['////']*20+['\\\\\\']*18+['----']*18+['xxx']*20
     for i,thisbar in enumerate(g.ax.patches):
         # Set a different hatch for each bar
@@ -199,5 +200,5 @@ plt.show()
 modes = ['APCI','APPI','ESI','LDI']
 for mode in modes:
     sns.distplot(df1[df1['Mode']==mode]['O'],hist=False,kde_kws={'bw':1})
-    
+
 """

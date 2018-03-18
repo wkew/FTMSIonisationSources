@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Will Kew
+will.kew@gmail.com
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -33,7 +39,7 @@ xlims = [(100,1000),
 #polarity = polarities[0]
 for polarity in polarities:
     fig,axarr = plt.subplots(4,3,sharex='col',figsize=(10,6))
-    i,j=0,0  
+    i,j=0,0
     for mode in modes:
         j= 0
         file = sample+"-"+mode+"-"+polarity
@@ -80,7 +86,7 @@ for polarity in polarities:
                 bbox=dict(facecolor='w', alpha=0.5))
             j = j+1
         i = i+1
-    
+
     for i in axarr[-1]:
         i.set_xlabel("$\itm/z$",size=labelsize)
     for i in axarr.T[0]:
@@ -94,13 +100,13 @@ for polarity in polarities:
                verticalalignment = "center",
                transform=i.transAxes)
         j=j+1
-        
+
     for x in axarr:
         for y in x:
             y.spines['right'].set_visible(False)
             y.spines['top'].set_visible(False)
-            
-    
+
+
     fig.subplots_adjust(hspace=0.1)
     fig.savefig(outpath+sample+"/"+sample+"-"+polarity+".eps",dpi=300)
     fig.savefig(outpath+sample+"/"+sample+"-"+polarity+"highres.png",dpi=600)
@@ -160,10 +166,10 @@ for file in files:
 
 #axarr[0,0].set_ylabel("%",size=labelsize)
 """
-i,j=0,0    
+i,j=0,0
 for x in modes:
     j= 0
-    for y in xlims: 
+    for y in xlims:
         print(i,j)
         j = j+1
     i = i+1
@@ -184,6 +190,3 @@ ax.set_ylabel("%")
 xlim = (353.0,353.3)
 xlim = (363.0,376.3)
 """
-
-
-

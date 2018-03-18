@@ -2,7 +2,8 @@
 """
 Created on Thu Oct 26 23:09:59 2017
 
-@author: Will
+@author: Will Kew
+will.kew@gmail.com
 """
 
 
@@ -58,16 +59,16 @@ intsets = upset['intersection_sets']
 intsetkeys = []
 for y in intsets:
     intsetkeys.append(y)
-    
+
 def plotcommontoall():
     df_common = intsets[intsetkeys[-1]]
     df_common = df_common.sort_values('Mass')
     glocmap = cm.viridis_r
-    
+
     sns.set_style("white")
-    sns.set_context("paper",font_scale=2)  
+    sns.set_context("paper",font_scale=2)
     glocmap = cm.viridis_r
-    
+
     scalefactor = (df_common['Abundance'].mean()/(df_common['Abundance'].sum()*len(df_common)))*2
     labelsize = 20
     xlim = (0,1.2)
@@ -76,8 +77,8 @@ def plotcommontoall():
     fig, ax = plt.subplots(figsize=(8,6))
     im = ax.scatter(x=df_common['OC'], y=df_common['HC'],cmap=glocmap,c=df_common['Mass'],
                s=df_common['Abundance']*scalefactor,alpha=0.75,label='Common')
-    
-    
+
+
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
     ax.set_xlabel("O/C",fontdict={'fontsize':labelsize})
@@ -125,7 +126,7 @@ df_pairwise.loc["Overall","Neg"]=len(uniquetoneg)
 df_pairwise.loc["Overall","Pos"]=len(uniquetopos)
 df_pairwise.loc["Overall","Common"]=len(common)
 df_pairwise.loc["Overall","Total"]=len(uniquetoneg)+len(uniquetopos)+len(common)
-df_pairwise.loc["Overall","% Common"]=len(common)/(len(uniquetoneg)+len(uniquetopos)+len(common))   
+df_pairwise.loc["Overall","% Common"]=len(common)/(len(uniquetoneg)+len(uniquetopos)+len(common))
 
 df_pairwise.to_excel(path+"PairwiseIntersections.xlsx")
 """
@@ -135,7 +136,7 @@ df_pairwise = pd.DataFrame(index=modes,columns=["neg","pos","common"])
 for x in modes:
     df_dict_pairwise = {x+' (+)':df2[(df2['Polarity']=='Pos') & (df2['Mode']==x)],
                         x+' (-)':df2[(df2['Polarity']=='Neg') & (df2['Mode']==x)]}
-    
+
 
     upset = pyu.plot(df_dict_pairwise,unique_keys=['Formula'])
     intsets = upset['intersection_sets']

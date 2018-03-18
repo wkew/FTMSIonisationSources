@@ -2,7 +2,8 @@
 """
 Created on Tue Oct 24 15:04:37 2017
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -26,7 +27,7 @@ df1 = df1[df1['Mass']<800]
 df1 = df1[df1['O']<20]
 
 sns.set_style("white")
-sns.set_context("paper",font_scale=2)  
+sns.set_context("paper",font_scale=2)
 glocmap = cm.viridis_r
 
 
@@ -36,7 +37,7 @@ df2 = df1.rename(columns={'id':'Count'}).groupby(['Polarity','Mode','Formula'],a
 df2['Abundance'] = df1.groupby(['Polarity','Mode','Formula'],as_index=False)['Abundance'].median()['Abundance']
 df2['HeteroClass'] = df1.groupby(['Polarity','Mode','Formula'],as_index=False)['HeteroClass'].first()['HeteroClass']
 df2[staticolumns] = df1.groupby(['Polarity','Mode','Formula'],as_index=False)[staticolumns].mean()[staticolumns]
-        
+
 
 def panelplot2(plttype,modes,polarity,df,figsize):
     df = df.sort_values('Mass')
@@ -70,7 +71,7 @@ def panelplot2(plttype,modes,polarity,df,figsize):
         ylim = (0,1)
         clim = (0,20)
         xlabel, ylabel, clabel = 'C','AImod','O'
-    
+
     f, axarr = plt.subplots(2, 2,figsize=figsize)
     i = 0
     for mode in modes:
@@ -103,8 +104,8 @@ def panelplot2(plttype,modes,polarity,df,figsize):
         #ax.set_xticklabels([])
         #xticklabels.append(ax.get_xticklabels())
         #plt.setp(xticklabels, visible=False)
-        #ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=nbins,prune='upper')) # added 
-        
+        #ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=nbins,prune='upper')) # added
+
     plt.subplots_adjust(hspace=0.1,wspace=0.08)
     #plt.suptitle(polarity,x=0.43)
     #divider = make_axes_locatable(plt.gca())
@@ -134,7 +135,7 @@ for plttype in plttypes:
 
 
 """
-#### For the panelled visualisation: ### 
+#### For the panelled visualisation: ###
 ### Sample, Polarity specific plots ###
 def panelplot(plttype,modes,sample,polarity,df):
     df = df.sort_values('Mass')
@@ -167,7 +168,7 @@ def panelplot(plttype,modes,sample,polarity,df):
         ylim = (0,1)
         clim = (0,20)
         xlabel, ylabel, clabel = 'C','AImod','O'
-    
+
     f, axarr = plt.subplots(2, 2,figsize=(12,7))
     i = 0
     for mode in modes:
@@ -194,7 +195,7 @@ def panelplot(plttype,modes,sample,polarity,df):
         ax.set_ylabel(ylabel)
     for ax in axarr.flat[2:]:
         ax.set_xlabel(xlabel)
-        
+
     plt.subplots_adjust(hspace=0.4)
     plt.suptitle(sample+" "+polarity,x=0.43)
     color_bar = f.colorbar(im, ax=axarr.ravel().tolist(),alpha=1)
@@ -217,5 +218,5 @@ for plttype in plttypes:
     for polarity in polarities:
         for sample in samples:
             panelplot(plttype,modes,sample,polarity,df1)
-            
-"""    
+
+"""

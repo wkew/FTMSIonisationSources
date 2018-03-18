@@ -2,7 +2,8 @@
 """
 Created on Fri Feb  2 17:43:28 2018
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -20,7 +21,7 @@ outputdata = path
 files = os.listdir(inputdata)
 
 mode = None
-#mode = "normalise"   
+#mode = "normalise"
 df = pd.DataFrame(index=files,columns=['Total','Deprotonated','Radical','De-Duplicated'])
 
 bar = progressbar.ProgressBar()
@@ -30,11 +31,11 @@ for x in bar(files):
     totallength = len(df1)
     deprotonatedlength = len(df1[df1['State']=="H-"])
     radicallength = len(df1[df1['State']==".-"])
-    df1=df1.groupby('Formula',as_index=False).mean() #This clever line averages the values for duplicated formula, i.e. radicals found. 
+    df1=df1.groupby('Formula',as_index=False).mean() #This clever line averages the values for duplicated formula, i.e. radicals found.
     dedupedlength = len(df1)
     df.loc[x,'Total']=totallength
     df.loc[x,'Deprotonated']=deprotonatedlength
-    df.loc[x,'Radical']=radicallength    
+    df.loc[x,'Radical']=radicallength
     df.loc[x,'De-Duplicated']=dedupedlength
-    
+
 df.to_excel(outputdata+"RadicalStats.xlsx")

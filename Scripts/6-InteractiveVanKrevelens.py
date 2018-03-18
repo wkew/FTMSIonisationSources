@@ -4,31 +4,6 @@ Created on Sun Feb 18 15:17:58 2018
 
 @author: Will Kew
 will.kew@gmail.com
-
-    Copyright Will Kew, 2016
-
-    This file is part of FTMS Visualisation (also known as i-van Krevelen).
-
-    FTMS Visualisation is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    FTMS Visualisation is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with FTMS Visualisation.  If not, see <http://www.gnu.org/licenses/>.
-
-This script, like 2-StaticPlotter, reads in a pre-formatted CSV to produce scatter plots.
-However, this one is designed to work on single files, and produces an HTML file with interactive graphics in it, allowing for better understanding of the data.
-This functionality is novel and detailed in a recent letter (in preparation). 
-
-This script relies on the bokeh package
-http://bokeh.pydata.org/en/latest/
-https://github.com/bokeh/bokeh
 """
 from __future__ import print_function    # Python 2 compatibility
 from __future__ import absolute_import   # Python 2 compatibility
@@ -43,7 +18,7 @@ import os, sys
 import numpy as np
 import math
 #import pandas as pd
-#import matplotlib 
+#import matplotlib
 #from matplotlib import cm
 #import re
 #import numpy as np
@@ -57,7 +32,7 @@ from bokeh.models.widgets import Panel, Tabs, Button, DataTable, TableColumn, Nu
 import bokeh.palettes as bp
 from bokeh.resources import CDN #,JSResources,INLINE
 from bokeh.io import reset_output
-from jinja2 import Template 
+from jinja2 import Template
 
 from collections import OrderedDict
 
@@ -110,16 +85,16 @@ def intfileplot():
         intplotter(data,isodata,nodata,y,hetclassintdf)
         reset_output() #cleans up the cache which reduces file size
     """
-        
+
 def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     linewidth = 1.5
     source = ColumnDataSource(data)
-    s2 = ColumnDataSource(data=dict(mz=data["mz"],Error=data["Error"],RA=data["RA"],Formula=data["Formula"],HeteroClass=data["HeteroClass"]))    
+    s2 = ColumnDataSource(data=dict(mz=data["mz"],Error=data["Error"],RA=data["RA"],Formula=data["Formula"],HeteroClass=data["HeteroClass"]))
     isosource = ColumnDataSource(isodata)
     nosource = ColumnDataSource(nodata)
     url = "http://www.chemspider.com/Search.aspx?q=@Formula"
     TOOLS="crosshair,pan,wheel_zoom,box_zoom,reset,tap,previewsave,box_select,poly_select,lasso_select,hover"
-    
+
     figdims = (900,500) #pixel dimensions for the normal figures
     #msxlim = [200,700] #x limits in m/z for the mass spectra
     msxlim = [myround(min(data["mz"]),100),myround(max(data["mz"]),100)]
@@ -134,11 +109,11 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     hover.tooltips = OrderedDict([('Formula', "@Formula"),('Mass',"@mz{1.11111}"),('Error (ppm)',"@Error{1.11}")])
     taptool = p1.select(type=TapTool)
     taptool.callback = OpenURL(url=url)
-    
+
     color_bar = ColorBar(color_mapper=color_mapper, title="m/z", border_line_color=None, location=(0,0), scale_alpha=0.7)
                          #orientation='horizontal',location='top_left', scale_alpha=0.7)#,ticker=FixedTicker(ticks=[2,6,10,14,18]))
     p1.add_layout(color_bar,"right")
-    
+
 
     #dbexlim = [0,45]
     #dbeylim = [0,40]
@@ -153,16 +128,16 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     hover.tooltips = OrderedDict([('Formula', "@Formula"),('Mass',"@mz{1.11111}"),('Error (ppm)',"@Error{1.11}")])
     taptool = p2.select(type=TapTool)
     taptool.callback = OpenURL(url=url)
-    
+
     color_bar2 = ColorBar(color_mapper=color_mapper2, title="O#", border_line_color=None, location=(0,0), scale_alpha=0.7,ticker=FixedTicker(ticks=[0,int(cmax/4),int(cmax/2),int(3*cmax/4),cmax]))
     p2.add_layout(color_bar2,"right")
-    
+
     #aixlim=[0,45]
     aiylim= [0,1]
     aixlim = [0,max(data["C"])]
     #aiylim = [0,myround(max(data["AImod"]),5)]
     p3 = figure(tools=TOOLS, title=y[:-5]+" - AI(mod) vs C# Plot",width=figdims[0], height=figdims[1], x_axis_label='C#',y_axis_label='AI(mod)',x_range=aixlim,y_range=aiylim)
-    color_mapper3 = LinearColorMapper(palette=glocmap2, low=0, high=cmax)    
+    color_mapper3 = LinearColorMapper(palette=glocmap2, low=0, high=cmax)
     p3.scatter(x='C', y='AImod',source=source,size='VKsize', fill_color={'field': 'O', 'transform': color_mapper3}, fill_alpha=0.75,line_color=None)
     hover = p3.select(dict(type=HoverTool))
     hover.tooltips = OrderedDict([('Formula', "@Formula"),('Mass',"@mz{1.11111}"),('Error (ppm)',"@Error{1.11}")])
@@ -179,15 +154,15 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     hover = p4.select(dict(type=HoverTool))
     hover.tooltips = OrderedDict([('Formula', "@Formula"),('Mass',"@mz{1.11111}"),('Error (ppm)',"@Error{1.11}")])
     taptool = p4.select(type=TapTool)
-    taptool.callback = OpenURL(url=url) 
+    taptool.callback = OpenURL(url=url)
     p4.yaxis[0].formatter = PrintfTickFormatter(format="%4.1e")
-    
+
     """
     #this is me trying to plot a barplot of heteroatomic class distributions...
-    
+
     p7 = figure(tools=TOOLS, title=y[:-9]+"",width=800, height=600, x_axis_label='HeteroClass',y_axis_label='Count',webgl=True)
     p7.quad(left="HetClassInts",y=hetclassdf[0],source=source,width=5,height=)
-    
+
     t7 = layouts.Column(hist)
     tab7 = Panel(child=t7,title="test")
     """
@@ -204,7 +179,7 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     hover = p5.select(dict(type=HoverTool))
     hover.tooltips = OrderedDict([('Formula', "@Formula"),('Mass',"@mz{1.11111}"),('Error (ppm)',"@Error{1.11}")])
     taptool = p5.select(type=TapTool)
-    taptool.callback = OpenURL(url=url) 
+    taptool.callback = OpenURL(url=url)
     p5.yaxis[0].formatter = PrintfTickFormatter(format="%4.1e")
 
 
@@ -212,15 +187,15 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     cb1 = CustomJS(code=js_code1, args=dict(iso1=iso1,iso2=iso2,no1=no1,no2=no2))
     js_code2 = "iso1.glyph.visible = true; iso2.glyph.visible = true; no1.glyph.visible = true; no2.glyph.visible = true;"
     cb2 = CustomJS(code=js_code2, args=dict(iso1=iso1,iso2=iso2,no1=no1,no2=no2))
-        
+
     toggleOn = Button(label="Hide", button_type="success",callback=cb1)
-    toggleOff = Button(label="Show", button_type="success",callback=cb2)    
-    
-    top = layouts.Row(toggleOn,toggleOff)    
+    toggleOff = Button(label="Show", button_type="success",callback=cb2)
+
+    top = layouts.Row(toggleOn,toggleOff)
     t3 = layouts.Column(top,p5)
     tab3 = Panel(child=t3,title="Centroid MS with Isotopomers and No Hits")
-    
- 
+
+
     downloadbutton = Button(label="Download", button_type="success")
     downloadbutton.callback = CustomJS(args=dict(s2=s2), code="""
 		var data = s2.get('data');
@@ -251,18 +226,18 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
 			link.style.visibility = 'hidden';
 			link.dispatchEvent(new MouseEvent('click'))
 		}
-	""")       
- 
+	""")
+
 
     columns = [TableColumn(field="mz",title="m/z",formatter=NumberFormatter(format="0.00000")),
                 TableColumn(field="Error", title="Error (ppm)",formatter=NumberFormatter(format="0.00")),
                 TableColumn(field="RA",title="Abundance"),
                 TableColumn(field="Formula",title="Formula"),
-                TableColumn(field="HeteroClass",title="Heteroatomic Class")]    
+                TableColumn(field="HeteroClass",title="Heteroatomic Class")]
     data_table = DataTable(source=s2, columns=columns, width=1400,row_headers=False,fit_columns=True)
     t4 = layouts.Column(data_table,downloadbutton)
     tab4=Panel(child=t4,title="Selected Data Table")
-    
+
     source.callback = CustomJS(args=dict(s2=s2,dt=data_table), code="""
         var inds = cb_obj.get('selected')['1d'].indices;
         var d1 = cb_obj.get('data');
@@ -291,7 +266,7 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
         s2.trigger('change');
         dt.trigger('change');
     """)
-    
+
     """
     hetclasslist = hetclassintdf["HetClass"].tolist()
     hetclasslistnew = []
@@ -305,20 +280,20 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
     t12 = layouts.Column(t1,t2)
     tab1 = Panel(child=t12, title="Main")
     tabs = Tabs(tabs=[ tab1, tab3, tab4])
-     
-     
+
+
     for figs in [p1,p2,p3,p4,p5]:
         figs.xaxis.axis_label_text_font_size = "14pt"
-        figs.xaxis.major_label_text_font_size = "14pt"  
+        figs.xaxis.major_label_text_font_size = "14pt"
         figs.yaxis.axis_label_text_font_size = "14pt"
-        figs.yaxis.major_label_text_font_size = "14pt"  
+        figs.yaxis.major_label_text_font_size = "14pt"
         figs.title.text_font_size = "14pt"
         figs.toolbar_location = "above"
-    
-    
+
+
     with open(outputpath+'templates/index.html', 'r') as f:
         template = Template(f.read())
-    
+
     #js_resources = JSResources(mode='inline')
     html = file_html(tabs,(CDN,CDN),"Interactive Van Krevelen Diagrams",template=template)
     output_file2 = outputpath+y[:-5]+'-plot.html'
@@ -326,5 +301,5 @@ def intplotter(data,isodata,nodata,y):#,hetclassintdf):
         f.write(html)
     view(output_file2)
     #show(tabs)  # open a browser
-    
+
 intfileplot()

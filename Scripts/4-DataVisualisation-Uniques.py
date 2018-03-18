@@ -2,7 +2,8 @@
 """
 Created on Tue Oct 24 15:04:37 2017
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -10,13 +11,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import ticker
-#import re
-#import numpy as np
-#import pyupset as pyu
-
 
 path = "F:/Will/Dropbox/Documents/University/Edinburgh/FTICRMS/MixedIonisation3-formularity/"
-#path = "C:/Users/Will/Dropbox/Documents/University/Edinburgh/FTICRMS/MixedIonisation3-formularity/"
 
 inputdata = path +"ReformAssignments/"
 outputdata = path+"Images/"
@@ -31,7 +27,7 @@ df = df[df['O']<20]
 
 
 sns.set_style("white")
-sns.set_context("paper",font_scale=2)  
+sns.set_context("paper",font_scale=2)
 glocmap = cm.viridis_r
 
 
@@ -54,7 +50,7 @@ def VKplot():
     df4 = df2.drop(df3.index)
     #scalefactor=1E-5
     scalefactor = (df3['Abundance'].mean()/(df3['Abundance'].sum()*len(df3)))*20
-    
+
     xlim = (0,1.5)
     ylim = (0,2.5)
     fig, ax = plt.subplots(figsize=(8,6))
@@ -74,23 +70,23 @@ def VKplot():
     ax.yaxis.set_major_locator(ticker.MaxNLocator(3))
     ax.xaxis.set_tick_params(which='both', direction='out',width=1.25,length=8)
     ax.yaxis.set_tick_params(which='both', direction='out',width=1.25,length=8)
-    
+
     lgnd = plt.legend()
     for i in range(5):
         lgnd.legendHandles[i]._sizes = [30]
     plt.tight_layout()
     plt.savefig(outputdata+"UniqueVanKrevelen-"+polarity+".png",dpi=300) #saves the PNG (raster) at high DPI
     plt.show()
-    
+
 VKplot()
- 
+
 
 def DBEplot():
     df3 = df2.drop_duplicates(subset=['Formula'],keep=False).copy()
     df4 = df2.drop(df3.index)
     #scalefactor=1E-5
     scalefactor = (df3['Abundance'].mean()/(df3['Abundance'].sum()*len(df3)))*20
-    
+
     xlim = (0,60)
     ylim = (0,30)
     fig, ax = plt.subplots(figsize=(8,6))
@@ -110,7 +106,7 @@ def DBEplot():
     ax.yaxis.set_major_locator(ticker.MaxNLocator(3))
     ax.xaxis.set_tick_params(which='both', direction='out',width=1.25,length=8)
     ax.yaxis.set_tick_params(which='both', direction='out',width=1.25,length=8)
-    
+
     lgnd = plt.legend()
     for i in range(5):
         lgnd.legendHandles[i]._sizes = [30]
@@ -120,21 +116,3 @@ def DBEplot():
 
 
 DBEplot()
-"""
-
-df_APCI = df[df['Mode']=='APCI']
-df_APPI = df[df['Mode']=='APPI']
-df_ESI = df[df['Mode']=='ESI']
-df_LDI = df[df['Mode']=='LDI']
-
-sns.kdeplot(df_APCI['OC'],df_APCI['HC'],shade=True,cmap="Greens", shade_lowest=False,alpha=0.75)
-sns.kdeplot(df_APPI['OC'],df_APPI['HC'],shade=True,cmap="Reds", shade_lowest=False,alpha=0.75)
-sns.kdeplot(df_ESI['OC'],df_ESI['HC'],shade=True,cmap="Blues", shade_lowest=False,alpha=0.75)
-sns.kdeplot(df_LDI['OC'],df_LDI['HC'],shade=True,cmap="Blues", shade_lowest=False,alpha=0.75)
-
-
-plt.scatter(df_APCI['OC'],df_APCI['HC'],color='g',alpha=0.75)
-plt.scatter(df_APPI['OC'],df_APPI['HC'],color='r',alpha=0.75)
-plt.scatter(df_ESI['OC'],df_ESI['HC'],color='b',alpha=0.75)
-plt.scatter(df_LDI['OC'],df_LDI['HC'],color='k',alpha=0.75)
-"""

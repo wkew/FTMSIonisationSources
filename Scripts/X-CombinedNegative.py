@@ -2,7 +2,8 @@
 """
 Created on Wed Jan 17 20:49:10 2018
 
-@author: Will
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd

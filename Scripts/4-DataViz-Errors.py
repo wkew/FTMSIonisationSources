@@ -2,7 +2,8 @@
 """
 Created on Thu Jan 18 22:33:27 2018
 
-@author: Will
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -55,11 +56,11 @@ for i in range(len(axes)):
     axes[i].spines['top'].set_visible(False)
     axes[i].spines['left'].set_visible(False)
     axes[i].text(-0.4,axes[i].get_ylim()[1]*0.4,modes[i]+poltext,
-                fontsize=labelsize,color='black',ha='left',va='center') 
-    
+                fontsize=labelsize,color='black',ha='left',va='center')
+
 for ax in axes[:3]:
     ax.get_xaxis().set_visible(False)
-    
+
 #ax4.set_xlabel("Error (ppm)",fontweight="bold", color='black')
 ax4.tick_params(direction='out', length=6, width=2, colors='k',labelsize=labelsize)
 ax4.set_xlabel("Error (ppm)",color='k',fontsize=labelsize,fontweight='bold')

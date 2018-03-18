@@ -2,7 +2,8 @@
 """
 Created on Tue Jan 16 16:16:10 2018
 
-@author: s1457548
+@author: Will Kew
+will.kew@gmail.com
 """
 
 import pandas as pd
@@ -28,7 +29,7 @@ def hetclasser(C,H,O):
     return hetclass
 
 # Aromaticity Index calculation. Unlike DBE, this factors in O and S. Taken from DOI: 10.1002/rcm.2386
-# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound. 
+# Added switch for using the "modified" aromaticity index instead of the normal one. This halves #O on basis/assumption only half will be pi-bound.
 def AIcalc(C,H,N,O,S,P,mod=True):
     if C == 0:
         return None
@@ -66,7 +67,7 @@ file = "Assignments.csv"
 
 df = pd.read_csv(inputdata+file,index_col=0)
 
-nsamples = len(df.T)-15 # how many samples are in this dataframe? 
+nsamples = len(df.T)-15 # how many samples are in this dataframe?
 samplenames = df.columns[15:].values.tolist() # Get the file names from the headers of the dataframe
 
 """
@@ -86,7 +87,7 @@ else:
 """
 polarity = "Neg"
 df_mono = df[(df['Class']!="None") & (df['C13']==0)].copy() #avoid set with copy warning
-df_iso = df[(df['Class']!="None") & (df['C13']!=0)].copy() #avoid set with copy warning      
+df_iso = df[(df['Class']!="None") & (df['C13']!=0)].copy() #avoid set with copy warning
 
 # This adds a column containing the formulas
 df_mono.loc[:,"Formula"] = df_mono.apply(lambda row: formulator(row['C'],row['H'],row['O']),axis=1)
@@ -106,14 +107,14 @@ statscols = ["Polarity","Ionisation Source", "Sample","Total Peaks","Monoisotopi
 
 df_statistics = pd.DataFrame(index=samplenames,columns=statscols)
 
-# This section computes statistics for assignments for each sample. 
+# This section computes statistics for assignments for each sample.
 for samplename in samplenames:
-    
+
     df_new = df.copy() #create a new dataframe copy of our data to modify
     samplestopdrop = samplenames[:]
     samplestopdrop.remove(samplename)
     df_new.drop(samplestopdrop,axis=1,inplace=True) # remove other samples from this dataframe
-    
+
     df_new = df_new[df_new[samplename]!=0] # This drops rows with 0 intensity for a peak - i.e. peaks not found in this sample.
 
     #add formula and heteroatomic classes
@@ -136,8 +137,8 @@ for samplename in samplenames:
     df_statistics.loc[samplename,"Percent Monoisotopic Assigned"] = len(df_new[(df_new['Class']!="None") & (df_new['C13']==0)]) / len(df_new)
     df_statistics.loc[samplename,"Mean Error (ppm)"] = df_new[(df_new['Class']!="None")]['Error_ppm'].abs().mean()
     df_statistics.loc[samplename,"Std Error"] = df_new[(df_new['Class']!="None")]['Error_ppm'].abs().std()
-    
-    
+
+
     df_statistics.loc[samplename,"Deprotonated"] = len(df_new[(df_new['State']=="H-")])
     df_statistics.loc[samplename,"Radicals"] = len(df_new[(df_new['State']==".-")])
     df_statistics.loc[samplename,"Monoisotopic Deprotonated"] = len(df_new[(df_new['State']=="H-") & (df_new['C13']==0)])
@@ -154,8 +155,8 @@ for samplename in samplenames:
     df_new_iso.to_excel(writer,'Isotopic Hits')
     df_new_nohits.to_excel(writer,'Unassigned')
     writer.save()
- 
-writer = pd.ExcelWriter(outputdata+"HitStatistics-Negative.xlsx") 
+
+writer = pd.ExcelWriter(outputdata+"HitStatistics-Negative.xlsx")
 df_statistics.to_excel(writer,"Statistics")
 # Get access to the workbook and sheet
 workbook = writer.book
