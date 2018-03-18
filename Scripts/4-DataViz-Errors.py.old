@@ -1,0 +1,75 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jan 18 22:33:27 2018
+
+@author: Will
+"""
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+path = "F:/Will/Dropbox/Documents/University/Edinburgh/FTICRMS/MixedIonisation3-formularity/"
+path = "C:/Users/Will/Dropbox/Documents/University/Edinburgh/FTICRMS/MixedIonisation3-formularity/"
+
+outputdata = path+"Images/"
+
+df = pd.read_excel(path+"AllHits-Errors-Longform.xlsx",sheet_name='Sheet1')
+
+plt.rc('font', weight='bold')
+
+xlim = (-0.5,0.5)
+polarities = ['Neg','Pos']
+modes = ['APCI','APPI','ESI','LDI']
+polaritiessym = ["(-)","(+)"]
+
+labels = []
+for x in modes:
+    for y in polaritiessym:
+        labels.append(x+"-"+y)
+        
+pal = sns.color_palette("Set1", len(modes))
+labelsize = 14
+
+f, axes = plt.subplots(4,2,sharex=True,figsize=(8,8))
+
+bins = list(np.linspace(xlim[0],xlim[1],30))
+hist_kws={"alpha":1,
+           "align":'mid',
+           "range":xlim,
+           "linewidth":1.5}
+
+for j in range(len(polarities)):
+    for i in range(len(modes)):
+        sns.distplot(df[(df['Polarity']==polarities[j]) & (df['Mode']==modes[i])]['Error'],
+                        ax=axes[i][j],bins=bins,color=pal[i],#label=modes[i],
+                        kde=False,#kde_kws={'clip': xlim},
+                        hist_kws=hist_kws)
+        axes[i][j].get_yaxis().set_visible(False)
+        axes[i][j].set_xlim(xlim)
+        axes[i][j].spines['right'].set_visible(False)
+        axes[i][j].spines['top'].set_visible(False)
+        axes[i][j].spines['left'].set_visible(False)
+        axes[i][j].text(-0.45,axes[i][j].get_ylim()[1]*0.5,modes[i]+"-"+polaritiessym[j],
+                    fontsize=labelsize,color='black',ha='left',va='center') 
+    
+    for axe in axes[:3]:
+        for ax in axe:
+            ax.get_xaxis().set_visible(False)
+        
+    for ax in axes[-1]:
+        ax.tick_params(direction='out', length=6, width=2, colors='k',labelsize=labelsize)
+        ax.set_xlabel("Error (ppm)",color='k',fontsize=labelsize,fontweight='bold')
+    #f.text(0.09,0.5,'Relative Counts',va='center',rotation='vertical',color='k',fontsize=labelsize)
+    f.tight_layout()
+    f.savefig(outputdata+"ErrorHistogram.png",dpi=300)
+
+plt.rcdefaults()
+
+
+""" This is the seaborn code which  generates a similar plot with the same y-axis scales on each subplot. 
+g = sns.FacetGrid(df, row="Mode", col="Polarity", margin_titles=True)
+bins = np.linspace(-0.5,0.5, 30)
+g.map(plt.hist, "Error", color="steelblue", bins=bins, lw=0)
+"""
